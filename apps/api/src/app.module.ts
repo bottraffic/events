@@ -10,6 +10,11 @@ import { ReportsModule } from './reports/reports.module';
 import { CustomersModule } from './customers/customers.module';
 import { TasksModule } from './tasks/tasks.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
+import { CatalogModule } from './catalog/catalog.module';
+import { ContractsModule } from './contracts/contracts.module';
+import { InvitationsModule } from './invitations/invitations.module';
+import { RsvpModule } from './rsvp/rsvp.module';
+import { SeatingModule } from './seating/seating.module';
 import { HealthController } from './health.controller';
 import { JwtAuthGuard, RolesGuard } from './common/guards';
 
@@ -25,6 +30,11 @@ import { JwtAuthGuard, RolesGuard } from './common/guards';
     CustomersModule,
     TasksModule,
     WhatsappModule,
+    CatalogModule,
+    ContractsModule,
+    InvitationsModule,
+    RsvpModule,
+    SeatingModule,
   ],
   controllers: [HealthController],
   providers: [
