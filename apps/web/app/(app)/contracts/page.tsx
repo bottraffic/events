@@ -195,7 +195,7 @@ function ContractsInner() {
 
   /* ---------- EDITOR (50/50 full height) ---------- */
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col animate-fade-in">
+    <div className="flex flex-col animate-fade-in lg:h-[calc(100vh-3rem)]">
       {toast && <Toast msg={toast} />}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -210,9 +210,9 @@ function ContractsInner() {
         </div>
       </div>
 
-      <div className="grid min-h-0 flex-1 gap-5 lg:grid-cols-2">
+      <div className="grid gap-5 lg:min-h-0 lg:flex-1 lg:grid-cols-2">
         {/* edit side */}
-        <div className="min-h-0 space-y-4 overflow-y-auto pl-1">
+        <div className="space-y-4 lg:min-h-0 lg:overflow-y-auto lg:pl-1">
           <Card className="p-4">
             <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink"><Link2 className="h-4 w-4 text-brand-600" /> שיוך ללקוח</div>
             <CustomerCombo customers={customers} draft={draft} onLink={(c) => setDraft((d) => linkInto(d, c))} onClear={() => setDraft((d) => ({ ...d, customerId: undefined }))} onCreate={createCustomer} />

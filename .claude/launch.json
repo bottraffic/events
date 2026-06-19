@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web-demo",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace", "apps/web"],
+      "port": 3000,
+      "autoPort": true,
+      "env": { "NEXT_PUBLIC_DEMO": "1" }
+    }
+  ]
+}
