@@ -97,7 +97,7 @@ export function RichEditor({ initialHtml, variables, onChange }: { initialHtml: 
 
       {/* editable surface */}
       <div ref={ref} contentEditable suppressContentEditableWarning onInput={sync} onBlur={sync}
-        data-placeholder="התחל לכתוב את ההסכם…" className="rt-content bg-white px-6 py-5" />
+        data-placeholder="התחל לכתוב את ההסכם…" className="rt-content bg-white px-4 py-4 sm:px-6 sm:py-5" />
     </div>
   );
 }

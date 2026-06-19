@@ -99,14 +99,14 @@ function ContractsInner() {
   /* ---------- TEMPLATE EDITOR ---------- */
   if (tplDraft) {
     return (
-      <div className="flex h-[calc(100vh-3rem)] flex-col animate-fade-in">
+      <div className="flex flex-col animate-fade-in lg:h-[calc(100vh-3rem)]">
         {toast && <Toast msg={toast} />}
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div><h1 className="text-xl font-bold text-ink">{tplDraft.id ? 'עריכת תבנית' : 'תבנית חדשה'}</h1><p className="text-sm text-ink-muted">תבנית קבועה לשימוש חוזר ביצירת הסכמים</p></div>
           <div className="flex items-center gap-2"><button onClick={() => setTplDraft(null)} className="btn-ghost"><ArrowRight className="h-4 w-4" /> חזרה</button><button onClick={saveTpl} className="btn-primary"><Save className="h-4 w-4" /> שמור תבנית</button></div>
         </div>
-        <div className="grid min-h-0 flex-1 gap-5 lg:grid-cols-2">
-          <div className="min-h-0 space-y-4 overflow-y-auto pl-1">
+        <div className="grid gap-5 lg:min-h-0 lg:flex-1 lg:grid-cols-2">
+          <div className="space-y-4 lg:min-h-0 lg:overflow-y-auto lg:pl-1">
             <Card><CardHeader title="פרטי התבנית" /><div className="grid grid-cols-2 gap-3 p-4">
               <F label="שם התבנית" v={tplDraft.name} on={(v) => setTplDraft({ ...tplDraft, name: v })} />
               <F label="סוג אירוע" v={tplDraft.eventType} on={(v) => setTplDraft({ ...tplDraft, eventType: v })} />
@@ -115,9 +115,9 @@ function ContractsInner() {
               <RichEditor initialHtml={tplDraft.bodyHtml} variables={CONTRACT_VARS} onChange={(html) => setTplDraft((d) => (d ? { ...d, bodyHtml: html } : d))} />
             </div></Card>
           </div>
-          <div className="min-h-0"><Card className="flex h-full flex-col overflow-hidden">
+          <div className="lg:min-h-0"><Card className="flex flex-col overflow-hidden lg:h-full">
             <div className="border-b border-slate-100 px-4 py-2.5 text-sm font-semibold text-ink-soft">תצוגה מקדימה של התבנית</div>
-            <div className="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-6"><div className="mx-auto w-full max-w-2xl rounded-lg bg-white p-10 shadow-soft"><div className="rt-content !min-h-0 text-[14px]" dangerouslySetInnerHTML={{ __html: tplDraft.bodyHtml }} /></div></div>
+            <div className="min-h-[55vh] flex-1 overflow-y-auto bg-slate-100 p-4 sm:p-6"><div className="mx-auto w-full max-w-2xl rounded-lg bg-white p-5 shadow-soft sm:p-10"><div className="rt-content !min-h-0 break-words text-[14px]" dangerouslySetInnerHTML={{ __html: tplDraft.bodyHtml }} /></div></div>
           </Card></div>
         </div>
       </div>
@@ -142,15 +142,16 @@ function ContractsInner() {
             </div>
             <Card>
               <CardHeader title="כל ההסכמים" />
-              <table className="w-full text-right text-sm">
-                <thead className="border-b border-slate-100 text-ink-faint"><tr>{['הסכם', 'לקוח', 'תאריך אירוע', 'סכום', 'סטטוס', 'פעולות'].map((h) => <th key={h} className="p-3 font-medium">{h}</th>)}</tr></thead>
+              <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] text-right text-sm">
+                <thead className="border-b border-slate-100 text-ink-faint"><tr>{['הסכם', 'לקוח', 'תאריך אירוע', 'סכום', 'סטטוס', 'פעולות'].map((h) => <th key={h} className="whitespace-nowrap p-3 font-medium">{h}</th>)}</tr></thead>
                 <tbody>
                   {contracts.map((c) => (
                     <tr key={c.id} className="border-b border-slate-50 hover:bg-slate-50/60">
                       <td className="p-3 font-medium text-ink">{c.title}</td>
-                      <td className="p-3"><div className="flex items-center gap-2"><Avatar name={c.customerName} size={28} /><span className="text-ink-soft">{c.customerName}</span></div></td>
-                      <td className="p-3 text-ink-muted">{fmt(c.eventDate)}</td>
-                      <td className="p-3 font-medium text-ink-soft">₪{c.amount.toLocaleString()}</td>
+                      <td className="p-3"><div className="flex items-center gap-2"><Avatar name={c.customerName} size={28} /><span className="whitespace-nowrap text-ink-soft">{c.customerName}</span></div></td>
+                      <td className="whitespace-nowrap p-3 text-ink-muted">{fmt(c.eventDate)}</td>
+                      <td className="whitespace-nowrap p-3 font-medium text-ink-soft">₪{c.amount.toLocaleString()}</td>
                       <td className="p-3"><Badge tone={ST[c.status].tone} dot>{ST[c.status].label}</Badge></td>
                       <td className="p-3"><div className="flex gap-1">
                         <button onClick={() => { setDraft(c); setView('editor'); }} className="rounded-lg p-1.5 text-ink-faint hover:bg-slate-100 hover:text-brand-600" title="ערוך"><Pencil className="h-4 w-4" /></button>
@@ -163,6 +164,7 @@ function ContractsInner() {
                   {contracts.length === 0 && <tr><td colSpan={6} className="p-10 text-center text-ink-faint">אין הסכמים עדיין — לחץ "הסכם חדש" ובחר תבנית</td></tr>}
                 </tbody>
               </table>
+              </div>
             </Card>
           </>
         ) : (
@@ -238,8 +240,8 @@ function ContractsInner() {
         </div>
 
         {/* preview side — full height, full width */}
-        <div className="min-h-0">
-          <Card className="flex h-full flex-col overflow-hidden">
+        <div className="lg:min-h-0">
+          <Card className="flex flex-col overflow-hidden lg:h-full">
             <div className="no-print flex items-center justify-between border-b border-slate-100 px-4 py-2.5 text-sm">
               <span className="font-semibold text-ink-soft">תצוגה כפי שהלקוח יראה</span>
               <div className="flex items-center gap-2">
@@ -247,13 +249,13 @@ function ContractsInner() {
                 <Badge tone={ST[draft.status].tone} dot>{ST[draft.status].label}</Badge>
               </div>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-6">
-              <div className="print-doc mx-auto w-full max-w-2xl rounded-lg bg-white p-10 shadow-soft">
+            <div className="min-h-[55vh] flex-1 overflow-y-auto bg-slate-100 p-4 sm:p-6">
+              <div className="print-doc mx-auto w-full max-w-2xl rounded-lg bg-white p-5 shadow-soft sm:p-10">
                 <div className="mb-6 flex items-center justify-between border-b border-slate-100 pb-4">
                   <div><div className="text-xl font-extrabold text-brand-700">SIMCHA OS</div><div className="text-[11px] text-ink-faint">אולמי דמו בע"מ · ח.פ 51-XXXXXXX</div></div>
                   <div className="text-left text-[11px] text-ink-faint">מס׳ הסכם<br />{draft.id || 'טיוטה'}</div>
                 </div>
-                <div className="rt-content !min-h-0 text-[14px]" dangerouslySetInnerHTML={{ __html: renderMerged(draft.bodyHtml, md(draft)) }} />
+                <div className="rt-content !min-h-0 break-words text-[14px]" dangerouslySetInnerHTML={{ __html: renderMerged(draft.bodyHtml, md(draft)) }} />
                 <div className="mt-10 grid grid-cols-2 gap-6 border-t border-slate-100 pt-6">
                   <div className="text-center"><div className="mb-1 text-[11px] text-ink-faint">חתימת האולם</div><div className="h-16 border-b border-slate-300 pb-1 text-base text-ink-soft">אולמי דמו</div></div>
                   <div className="text-center"><div className="mb-1 text-[11px] text-ink-faint">חתימת הלקוח</div><div className="flex h-16 items-end justify-center border-b border-slate-300 pb-1">{draft.signature ? <img src={draft.signature} alt="חתימה" className="max-h-14" /> : <span className="text-[11px] text-slate-300">תיחתם ע"י הלקוח</span>}</div></div>
@@ -365,6 +367,13 @@ function Modal({ title, children, onClose }: { title: string; children: React.Re
 function SendModal({ contract, onClose, onSend }: { contract: Contract; onClose: () => void; onSend: (c: string) => void }) {
   const [copied, setCopied] = useState(false);
   const link = typeof window !== 'undefined' ? `${window.location.origin}/sign/${contract.id}` : '';
+  const copyLink = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(link);
+      else { const ta = document.createElement('textarea'); ta.value = link; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
+      setCopied(true); setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
   const channels = [
     { id: 'WhatsApp', Icon: MessageCircle, detail: contract.phone, color: 'hover:border-emerald-300 hover:bg-emerald-50', ic: 'text-emerald-600' },
     { id: 'SMS', Icon: Phone, detail: contract.phone, color: 'hover:border-violet-300 hover:bg-violet-50', ic: 'text-violet-600' },
@@ -384,7 +393,7 @@ function SendModal({ contract, onClose, onSend }: { contract: Contract; onClose:
       </div>
       <div className="mt-4 rounded-xl bg-slate-50 p-3">
         <div className="mb-1.5 text-xs font-medium text-ink-muted">קישור חתימה ללקוח:</div>
-        <div className="flex items-center gap-2"><input readOnly value={link} className="input !py-1.5 font-mono text-[11px] text-ink-faint" /><button onClick={() => { navigator.clipboard?.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 1500); }} className="btn-outline shrink-0 !py-1.5">{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}</button></div>
+        <div className="flex items-center gap-2"><input readOnly value={link} className="input !py-1.5 font-mono text-[11px] text-ink-faint" /><button onClick={copyLink} className="btn-outline shrink-0 !py-1.5">{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}</button></div>
       </div>
     </Modal>
   );
