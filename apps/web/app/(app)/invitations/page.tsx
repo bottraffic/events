@@ -22,11 +22,42 @@ function InvitationsInner() {
   const [sharing, setSharing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState('');
+  const [phone, setPhone] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
   const set = (k: keyof InviteData, v: string) => setF((p) => ({ ...p, [k]: v }));
   const slug = `${f.groom}-${f.bride}`.replace(/\s/g, '') || 'event';
   const link = typeof window !== 'undefined' ? `${window.location.origin}/i/${slug}` : '';
   const flash = (m: string) => { setToast(m); setTimeout(() => setToast(''), 3000); };
+
+  // invitation message shared across channels
+  const shareText = `הזמנה לאירוע של ${f.groom}${f.bride ? ' ו' + f.bride : ''} ${f.emoji || '🎉'}\n${[f.date, f.day, f.time].filter(Boolean).join(' · ')}\n${[f.venue, f.city].filter(Boolean).join(', ')}\n\nלצפייה ואישור הגעה:\n${link}`;
+
+  // HTTP-safe copy (navigator.clipboard is undefined on non-HTTPS origins)
+  const copyLink = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(link);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = link; ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      setCopied(true); setTimeout(() => setCopied(false), 1500); flash('הקישור הועתק ✓');
+    } catch { flash('לא ניתן להעתיק אוטומטית — סמן והעתק ידנית'); }
+  };
+
+  const waNumber = phone.replace(/\D/g, '').replace(/^0/, '972');
+  const openShare = (id: 'WhatsApp' | 'SMS' | 'Email') => {
+    const enc = encodeURIComponent(shareText);
+    const url = id === 'WhatsApp'
+      ? `https://wa.me/${phone.trim() ? waNumber : ''}?text=${enc}`
+      : id === 'SMS'
+      ? `sms:${phone.trim() ? waNumber : ''}?&body=${enc}`
+      : `mailto:?subject=${encodeURIComponent('הזמנה לאירוע 🎉')}&body=${enc}`;
+    window.open(url, '_blank');
+    flash(`נפתח ${id} — בחר/י נמען ושלח/י ✓`);
+  };
 
   const loadTpls = () => api<CustomTpl[]>('/invitation-templates').then(setCustomTpls).catch(() => {});
   useEffect(() => {
@@ -62,14 +93,20 @@ function InvitationsInner() {
             <div className="mb-1 flex items-center justify-between"><h3 className="font-semibold text-ink">ההזמנה פורסמה 🎉</h3><button onClick={() => setSharing(false)} className="text-ink-faint hover:text-ink"><X className="h-4 w-4" /></button></div>
             <p className="mb-3 text-sm text-ink-muted">האורחים יצפו ויאשרו הגעה דרך הקישור:</p>
             <div className="mb-3 flex items-center gap-2 rounded-xl bg-slate-50 p-2">
-              <input readOnly value={link} className="input !py-1.5 font-mono text-[11px] text-ink-faint" />
-              <button onClick={() => { navigator.clipboard?.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 1500); }} className="btn-outline shrink-0 !py-1.5">{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}</button>
+              <input readOnly value={link} onFocus={(e) => e.currentTarget.select()} className="input !py-1.5 font-mono text-[11px] text-ink-faint" />
+              <button onClick={copyLink} className="btn-outline shrink-0 !py-1.5">{copied ? <><Check className="h-4 w-4" /> הועתק</> : <><Copy className="h-4 w-4" /> העתק</>}</button>
             </div>
+
+            <label className="mb-3 block">
+              <span className="mb-1 block text-xs font-medium text-ink-muted">מספר וואטסאפ לשליחה ישירה (אופציונלי)</span>
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="לדוגמה 0501234567 — או השאר ריק לבחירת איש קשר" inputMode="tel" className="input !py-2" />
+            </label>
+
             <div className="space-y-2">
-              {[{ id: 'WhatsApp', Icon: MessageCircle, c: 'text-emerald-600' }, { id: 'SMS', Icon: Phone, c: 'text-violet-600' }, { id: 'Email', Icon: Mail, c: 'text-sky-600' }].map((ch) => (
-                <button key={ch.id} onClick={() => { setSharing(false); flash(`ההזמנה נשלחה ב-${ch.id} ✓`); }} className="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-right transition hover:bg-slate-50">
+              {([{ id: 'WhatsApp', Icon: MessageCircle, c: 'text-emerald-600', label: phone.trim() ? 'שלח בוואטסאפ למספר שהוזן' : 'שתף בוואטסאפ (בחר/י איש קשר)' }, { id: 'SMS', Icon: Phone, c: 'text-violet-600', label: 'שלח ב-SMS' }, { id: 'Email', Icon: Mail, c: 'text-sky-600', label: 'שלח באימייל' }] as const).map((ch) => (
+                <button key={ch.id} onClick={() => openShare(ch.id)} className="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-right transition hover:bg-slate-50">
                   <span className={`flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 ${ch.c}`}><ch.Icon className="h-5 w-5" /></span>
-                  <div className="flex-1 font-semibold text-ink">שלח ב-{ch.id}</div>
+                  <div className="flex-1 font-semibold text-ink">{ch.label}</div>
                 </button>
               ))}
             </div>
