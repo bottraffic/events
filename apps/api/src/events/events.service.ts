@@ -46,7 +46,7 @@ export class EventsService {
       include: {
         customer: true,
         hall: true,
-        checklistItems: { orderBy: { createdAt: 'asc' } },
+        checklistItems: { orderBy: { id: 'asc' } },
         contracts: true,
         _count: { select: { guests: true, invitations: true } },
       },
