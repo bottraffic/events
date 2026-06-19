@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "SIMCHA OS",
-    "slug": "simcha-os",
+    "name": "events360",
+    "slug": "events360",
+    "owner": "bottraffic",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "simcha",
@@ -23,7 +24,10 @@
     "android": {
       "package": "io.simcha.os",
       "versionCode": 1,
-      "permissions": ["RECORD_AUDIO"],
+      "permissions": [
+        "RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#6366f1"
@@ -35,14 +39,23 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      ["@react-native-voice/voice", {
-        "microphonePermission": "האפליקציה משתמשת במיקרופון לעוזר הקולי",
-        "speechRecognitionPermission": "זיהוי דיבור מאפשר לשאול את העוזר בקול"
-      }]
+      [
+        "@react-native-voice/voice",
+        {
+          "microphonePermission": "האפליקציה משתמשת במיקרופון לעוזר הקולי",
+          "speechRecognitionPermission": "זיהוי דיבור מאפשר לשאול את העוזר בקול"
+        }
+      ]
     ],
     "extra": {
       "apiUrl": "http://10.0.2.2:4000/v1",
-      "demo": true
+      "demo": true,
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f276fe0a-d4bf-4e86-a02b-5825d1cda56d"
+      }
     }
   }
 }
