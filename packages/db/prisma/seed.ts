@@ -28,9 +28,11 @@ async function main() {
     },
   });
 
-  const adminRole = await prisma.role.create({
-    data: { tenantId: tenant.id, name: 'מנהל', level: RoleLevel.ADMIN, isSystem: true },
-  });
+  const adminRole =
+    (await prisma.role.findFirst({ where: { tenantId: tenant.id, level: RoleLevel.ADMIN } })) ??
+    (await prisma.role.create({
+      data: { tenantId: tenant.id, name: 'מנהל', level: RoleLevel.ADMIN, isSystem: true },
+    }));
 
   const passwordHash = await bcrypt.hash('Demo1234!', 10);
   const admin = await prisma.user.upsert({
@@ -46,9 +48,11 @@ async function main() {
     },
   });
 
-  const stages = [];
-  for (const s of DEFAULT_STAGES) {
-    stages.push(await prisma.pipelineStage.create({ data: { tenantId: tenant.id, ...s } }));
+  let stages = await prisma.pipelineStage.findMany({ where: { tenantId: tenant.id }, orderBy: { order: 'asc' } });
+  if (stages.length === 0) {
+    for (const s of DEFAULT_STAGES) {
+      stages.push(await prisma.pipelineStage.create({ data: { tenantId: tenant.id, ...s } }));
+    }
   }
 
   const demoLeads = [
@@ -58,15 +62,18 @@ async function main() {
     { name: 'משה צור', phone: '050-4444444', source: LeadSource.WHATSAPP, score: 55, estimatedValue: 60000 },
   ];
 
-  for (let i = 0; i < demoLeads.length; i++) {
-    await prisma.lead.create({
-      data: {
-        tenantId: tenant.id,
-        stageId: stages[i % 5].id,
-        assignedToId: admin.id,
-        ...demoLeads[i],
-      },
-    });
+  const existingLeads = await prisma.lead.count({ where: { tenantId: tenant.id } });
+  if (existingLeads === 0) {
+    for (let i = 0; i < demoLeads.length; i++) {
+      await prisma.lead.create({
+        data: {
+          tenantId: tenant.id,
+          stageId: stages[i % stages.length].id,
+          assignedToId: admin.id,
+          ...demoLeads[i],
+        },
+      });
+    }
   }
 
   console.log(`✅ Done. Login: admin@demo.simcha.io / Demo1234! (tenant: ${tenant.slug})`);
