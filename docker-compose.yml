@@ -1,0 +1,39 @@
+version: '3.9'
+
+# Local infrastructure for SIMCHA OS. Run:  docker compose up -d
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: simcha-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: simcha
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysqldata:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-proot']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: simcha-redis
+    ports:
+      - '6379:6379'
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: simcha-rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672' # management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: simcha
+      RABBITMQ_DEFAULT_PASS: simcha
+
+volumes:
+  mysqldata:

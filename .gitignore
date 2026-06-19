@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.next/
+out/
+*.tsbuildinfo
+
+# env
+.env
+.env.local
+!.env.example
+
+# prisma generated client
+packages/db/node_modules/.prisma/
+
+# logs / os
+*.log
+.DS_Store
+Thumbs.db

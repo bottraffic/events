@@ -1,0 +1,27 @@
+{
+  "name": "@simcha/db",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "generate": "prisma generate",
+    "validate": "prisma validate",
+    "migrate": "prisma migrate dev",
+    "deploy": "prisma migrate deploy",
+    "seed": "ts-node prisma/seed.ts",
+    "build": "prisma generate && tsc"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3",
+    "prisma": "^5.22.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "simcha-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SIMCHA OS — Multi-Tenant SaaS for event venues",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "db:generate": "npm run generate -w @simcha/db",
+    "db:migrate": "npm run migrate -w @simcha/db",
+    "db:seed": "npm run seed -w @simcha/db",
+    "dev:api": "npm run start:dev -w @simcha/api",
+    "dev:web": "npm run dev -w @simcha/web",
+    "build": "npm run build -w @simcha/db && npm run build -w @simcha/api && npm run build -w @simcha/web"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

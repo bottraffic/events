@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f4f5f9;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.015em;
+}
+
+/* refined thin scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-card;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition active:scale-[0.98] disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white shadow-soft hover:bg-brand-700;
+  }
+  .btn-ghost {
+    @apply btn text-ink-soft hover:bg-slate-100;
+  }
+  .btn-outline {
+    @apply btn border border-slate-300 bg-white text-ink-soft hover:bg-slate-50;
+  }
+  .input {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:shadow-glow;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+}
+
+/* Word-like rich editor */
+.rt-content {
+  min-height: 460px;
+  outline: none;
+  line-height: 1.9;
+  color: #1e293b;
+  font-size: 14px;
+}
+.rt-content:focus {
+  outline: none;
+}
+.rt-content h1 { font-size: 1.5rem; font-weight: 800; margin: 0.6em 0 0.3em; }
+.rt-content h2 { font-size: 1.2rem; font-weight: 700; margin: 0.5em 0 0.25em; }
+.rt-content p { margin: 0.4em 0; }
+.rt-content ul { list-style: disc; padding-inline-start: 1.5em; margin: 0.4em 0; }
+.rt-content ol { list-style: decimal; padding-inline-start: 1.5em; margin: 0.4em 0; }
+.rt-content:empty::before { content: attr(data-placeholder); color: #94a3b8; }
+.rt-var {
+  display: inline-flex;
+  align-items: center;
+  background: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  padding: 0 6px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin: 0 1px;
+  user-select: all;
+  white-space: nowrap;
+}
+
+/* print — only the contract document */
+@media print {
+  body * { visibility: hidden !important; }
+  .print-doc, .print-doc * { visibility: visible !important; }
+  .print-doc {
+    position: absolute !important;
+    inset: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .no-print { display: none !important; }
+}
+
+/* gradient mesh background for auth / hero */
+.mesh-bg {
+  background:
+    radial-gradient(at 0% 0%, rgb(99 102 241 / 0.18) 0px, transparent 50%),
+    radial-gradient(at 98% 10%, rgb(168 85 247 / 0.14) 0px, transparent 45%),
+    radial-gradient(at 50% 100%, rgb(14 165 233 / 0.12) 0px, transparent 50%),
+    #f6f7fb;
+}
