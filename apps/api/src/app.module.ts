@@ -7,6 +7,9 @@ import { LeadsModule } from './leads/leads.module';
 import { PipelineModule } from './pipeline/pipeline.module';
 import { EventsModule } from './events/events.module';
 import { ReportsModule } from './reports/reports.module';
+import { CustomersModule } from './customers/customers.module';
+import { TasksModule } from './tasks/tasks.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { HealthController } from './health.controller';
 import { JwtAuthGuard, RolesGuard } from './common/guards';
 
@@ -19,6 +22,9 @@ import { JwtAuthGuard, RolesGuard } from './common/guards';
     PipelineModule,
     EventsModule,
     ReportsModule,
+    CustomersModule,
+    TasksModule,
+    WhatsappModule,
   ],
   controllers: [HealthController],
   providers: [
