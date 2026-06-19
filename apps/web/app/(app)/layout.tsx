@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Target, Users, Megaphone, CheckSquare, Calendar, Mail, UserCheck,
   Armchair, MessageSquare, Phone, FileText, Workflow, Sparkles, BarChart3, Store,
-  Settings, Search, Bell, LogOut, PanelRightClose, PanelRightOpen, Plus, CalendarClock, Receipt,
+  Settings, Search, Bell, LogOut, PanelRightClose, PanelRightOpen, Plus, CalendarClock, Receipt, Menu, X,
 } from 'lucide-react';
 import { api, clearSession, getToken } from '@/lib/api';
 import { Avatar } from '@/components/ui';
@@ -118,21 +118,31 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [me, setMe] = useState<{ name: string; roles: string[] } | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     if (!getToken()) { router.replace('/login'); return; }
     api('/auth/me').then(setMe).catch(() => {});
   }, [router]);
 
+  // close the mobile drawer whenever the route changes
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
+
   const logout = () => { clearSession(); router.replace('/login'); };
   const current = NAV.flatMap((s) => s.items).find((i) => i.href === pathname);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--bg)]">
-      <aside className={`flex flex-col border-l border-slate-200 bg-white transition-all duration-200 ${collapsed ? 'w-[72px]' : 'w-64'}`}>
+      {/* mobile drawer backdrop */}
+      {mobileOpen && <div className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />}
+
+      <aside className={`fixed inset-y-0 right-0 z-50 flex flex-col border-l border-slate-200 bg-white shadow-pop transition-transform duration-200 lg:static lg:z-auto lg:shadow-none lg:transition-all ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'} ${collapsed ? 'w-64 lg:w-[72px]' : 'w-64'}`}>
         <div className="flex h-16 items-center gap-2.5 border-b border-slate-100 px-4">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 font-extrabold text-white shadow-soft">S</div>
           {!collapsed && <div className="leading-tight"><div className="text-base font-extrabold tracking-tight text-ink">SIMCHA OS</div><div className="text-[10px] font-medium text-ink-faint">Enterprise</div></div>}
+          <button onClick={() => setMobileOpen(false)} className="ms-auto flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition hover:bg-slate-100 hover:text-ink-soft lg:hidden" aria-label="סגור תפריט">
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-2.5 py-3">
@@ -157,13 +167,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        <button onClick={() => setCollapsed((c) => !c)} className="m-2.5 flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-2 text-xs font-medium text-ink-faint transition hover:bg-slate-50">
+        <button onClick={() => setCollapsed((c) => !c)} className="m-2.5 hidden items-center justify-center gap-2 rounded-xl border border-slate-200 py-2 text-xs font-medium text-ink-faint transition hover:bg-slate-50 lg:flex">
           {collapsed ? <PanelRightOpen className="h-4 w-4" /> : <><PanelRightClose className="h-4 w-4" /> כווץ תפריט</>}
         </button>
       </aside>
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="relative z-40 flex h-16 shrink-0 items-center gap-4 border-b border-slate-200 bg-white/80 px-6 backdrop-blur">
+        <header className="relative z-40 flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 bg-white/80 px-4 backdrop-blur sm:gap-4 sm:px-6">
+          <button onClick={() => setMobileOpen(true)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-ink-muted transition hover:bg-slate-100 hover:text-ink-soft lg:hidden" aria-label="פתח תפריט">
+            <Menu className="h-5 w-5" />
+          </button>
           <div className="text-sm font-semibold text-ink-soft">{current?.label ?? ''}</div>
           <div className="relative ms-2 hidden flex-1 md:block">
             <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
@@ -179,7 +192,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
