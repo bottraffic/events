@@ -23,14 +23,19 @@
     },
     "android": {
       "package": "io.simcha.os",
-      "versionCode": 1,
+      "versionCode": 3,
       "permissions": [
+        "RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO",
         "RECORD_AUDIO",
         "android.permission.RECORD_AUDIO"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#6366f1"
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
       }
     },
     "web": {
@@ -56,6 +61,9 @@
       "eas": {
         "projectId": "f276fe0a-d4bf-4e86-a02b-5825d1cda56d"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f276fe0a-d4bf-4e86-a02b-5825d1cda56d"
     }
   }
 }
