@@ -16,6 +16,7 @@ import { InvitationsModule } from './invitations/invitations.module';
 import { RsvpModule } from './rsvp/rsvp.module';
 import { SeatingModule } from './seating/seating.module';
 import { CompatModule } from './compat/compat.module';
+import { TenantModule } from './tenant/tenant.module';
 import { HealthController } from './health.controller';
 import { JwtAuthGuard, RolesGuard } from './common/guards';
 
@@ -37,6 +38,7 @@ import { JwtAuthGuard, RolesGuard } from './common/guards';
     RsvpModule,
     SeatingModule,
     CompatModule,
+    TenantModule,
   ],
   controllers: [HealthController],
   providers: [

@@ -303,6 +303,10 @@ export async function mockApi(path: string, options: RequestInit = {}): Promise<
     return { accessToken: 'demo', refreshToken: 'demo', tenant: { id: 'demo', name: 'אולמי דמו', slug: 'demo' }, user: { id: 'u1', name: 'דני מנהל', email: body.email ?? 'admin@demo.simcha.io' } };
   if (path === '/auth/me') return { id: 'u1', name: 'דני מנהל', email: 'admin@demo.simcha.io', roles: ['ADMIN'] };
 
+  if (path === '/tenant' && method === 'GET') return { id: 'demo', name: 'אולמי דמו', slug: 'demo', logoUrl: (typeof localStorage !== 'undefined' ? localStorage.getItem('demo_logo') : '') || null };
+  if (path === '/tenant/logo' && method === 'PATCH') { if (typeof localStorage !== 'undefined') localStorage.setItem('demo_logo', body.logo || ''); return { ok: true, logoUrl: body.logo }; }
+  if (path === '/tenant/logo/remove') { if (typeof localStorage !== 'undefined') localStorage.removeItem('demo_logo'); return { ok: true }; }
+
   if (path === '/pipeline') {
     const leads = getLeads();
     return STAGES.map((s) => ({ ...s, leadsCount: leads.filter((l) => l.stageId === s.id).length, totalValue: leads.filter((l) => l.stageId === s.id).reduce((a, l) => a + (l.estimatedValue ?? 0), 0) }));

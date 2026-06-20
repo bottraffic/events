@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Plus, X, Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Plus, X, Check, ImagePlus, Trash2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useSync } from '@/lib/sync';
 import { PageHeader, Card, CardHeader, Badge, Avatar, Segmented } from '@/components/ui';
@@ -23,20 +23,56 @@ export default function SettingsPage() {
   const [inviting, setInviting] = useState(false);
   const [f, setF] = useState({ name: '', email: '', role: 'נציג' });
   const [toast, setToast] = useState('');
+  const [tenant, setTenant] = useState<{ name: string; logoUrl?: string | null }>({ name: '' });
+  const [savingLogo, setSavingLogo] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
   const load = () => api<User[]>('/users').then(setUsers).catch(() => {});
-  useEffect(() => { load(); }, []);
+  const loadTenant = () => api<any>('/tenant').then((t) => setTenant({ name: t.name, logoUrl: t.logoUrl })).catch(() => {});
+  useEffect(() => { load(); loadTenant(); }, []);
   useSync(load);
   const flash = (m: string) => { setToast(m); setTimeout(() => setToast(''), 3000); };
 
   const invite = async () => { if (!f.name.trim() || !f.email.trim()) return; await api('/users', { method: 'POST', body: JSON.stringify(f) }); setF({ name: '', email: '', role: 'נציג' }); setInviting(false); load(); flash('הזמנה נשלחה ✓'); };
 
+  const onLogoFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    if (file.size > 1.5 * 1024 * 1024) { flash('הקובץ גדול מדי (עד 1.5MB)'); return; }
+    const r = new FileReader();
+    r.onload = async () => {
+      const dataUrl = String(r.result);
+      setSavingLogo(true);
+      try { await api('/tenant/logo', { method: 'PATCH', body: JSON.stringify({ logo: dataUrl }) }); setTenant((t) => ({ ...t, logoUrl: dataUrl })); flash('הלוגו נשמר ✓'); }
+      catch { flash('שגיאה בשמירת הלוגו'); } finally { setSavingLogo(false); }
+    };
+    r.readAsDataURL(file);
+  };
+  const removeLogo = async () => { await api('/tenant/logo/remove', { method: 'PATCH' }).catch(() => api('/tenant/logo/remove', { method: 'POST' })); setTenant((t) => ({ ...t, logoUrl: null })); flash('הלוגו הוסר'); };
+
   return (
     <div className="animate-fade-in">
       {toast && <div className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-white shadow-pop">{toast}</div>}
       <PageHeader title="הגדרות" subtitle="משתמשים · הרשאות · חבילה וחיוב"
-        actions={<Segmented value={tab} onChange={setTab} options={[{ value: 'users', label: 'משתמשים' }, { value: 'billing', label: 'חבילה' }]} />} />
+        actions={<Segmented value={tab} onChange={setTab} options={[{ value: 'users', label: 'משתמשים' }, { value: 'branding', label: 'מיתוג' }, { value: 'billing', label: 'חבילה' }]} />} />
 
-      {tab === 'users' ? (
+      {tab === 'branding' ? (
+        <Card>
+          <CardHeader title="מיתוג האולם" subtitle="הלוגו יוצג באפליקציה, באתר, בהזמנות ובמסמכים" />
+          <div className="flex flex-col items-start gap-5 p-6 sm:flex-row sm:items-center">
+            <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50">
+              {tenant.logoUrl ? <img src={tenant.logoUrl} alt="logo" className="h-full w-full object-contain" /> : <span className="text-3xl font-extrabold text-slate-300">{(tenant.name || 'A').charAt(0)}</span>}
+            </div>
+            <div className="flex-1">
+              <div className="mb-1 font-semibold text-ink">לוגו האולם</div>
+              <p className="mb-3 text-sm text-ink-muted">PNG / JPG עד 1.5MB. מומלץ ריבועי או שקוף.</p>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => fileRef.current?.click()} disabled={savingLogo} className="btn-primary !py-2"><ImagePlus className="h-4 w-4" /> {savingLogo ? 'שומר…' : tenant.logoUrl ? 'החלף לוגו' : 'העלה לוגו'}</button>
+                {tenant.logoUrl && <button onClick={removeLogo} className="btn !py-2 bg-rose-50 text-rose-600 hover:bg-rose-100"><Trash2 className="h-4 w-4" /> הסר</button>}
+                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onLogoFile} />
+              </div>
+            </div>
+          </div>
+        </Card>
+      ) : tab === 'users' ? (
         <Card>
           <CardHeader title="צוות" subtitle="ניהול משתמשים והרשאות (RBAC)" action={<button onClick={() => setInviting(true)} className="btn-primary !py-2"><Plus className="h-4 w-4" /> הזמן משתמש</button>} />
           <div className="divide-y divide-slate-50">

@@ -106,6 +106,13 @@ export async function mockApi(path: string, options: RequestInit = {}): Promise<
   }
   if (path === '/auth/me') return { id: 'u1', name: 'דני מנהל', roles: ['ADMIN'] };
 
+  if (path === '/tenant' && method === 'GET') {
+    const logo = await AsyncStorage.getItem('demo_logo');
+    return { id: 'demo', name: 'אולמי דמו', slug: 'demo', logoUrl: logo || null };
+  }
+  if (path === '/tenant/logo' && method === 'PATCH') { await AsyncStorage.setItem('demo_logo', body.logo || ''); return { ok: true, logoUrl: body.logo }; }
+  if (path === '/tenant/logo/remove') { await AsyncStorage.removeItem('demo_logo'); return { ok: true }; }
+
   if (path === '/pipeline') {
     const leads = await getLeads();
     return STAGES.map((s) => ({ ...s, leadsCount: leads.filter((l) => l.stageId === s.id).length }));

@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "io.simcha.os",
-      "versionCode": 6,
+      "versionCode": 7,
       "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -34,7 +34,13 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "האפליקציה ניגשת לתמונות כדי להעלות את לוגו האולם"
+        }
+      ]
     ],
     "extra": {
       "apiUrl": "https://events.webon.org.il/v1",
