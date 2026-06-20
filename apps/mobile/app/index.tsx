@@ -32,7 +32,7 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.card}>
-        <Image source={require('../assets/icon.png')} style={styles.logoImg} resizeMode="cover" />
+        <Image source={require('../assets/logo-mark.png')} style={styles.logoImg} resizeMode="cover" />
         <Text style={styles.subtitle}>ניהול אולמות וגני אירועים</Text>
 
         <Text style={styles.label}>מזהה אולם</Text>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#eef2ff', justifyContent: 'center', padding: 20 },
   card: { backgroundColor: '#fff', borderRadius: 20, padding: 28, shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 20, elevation: 4 },
   logo: { fontSize: 30, fontWeight: '800', color: '#6366f1', textAlign: 'center' },
-  logoImg: { width: 76, height: 76, borderRadius: 18, alignSelf: 'center', marginBottom: 4 },
+  logoImg: { width: 104, height: 104, borderRadius: 24, alignSelf: 'center', marginBottom: 6 },
   subtitle: { fontSize: 13, color: '#64748b', textAlign: 'center', marginTop: 4, marginBottom: 20 },
   label: { fontSize: 13, fontWeight: '600', color: '#334155', textAlign: 'right', marginTop: 12, marginBottom: 4 },
   input: { borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, textAlign: 'right', fontSize: 15 },
