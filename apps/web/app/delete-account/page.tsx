@@ -50,7 +50,6 @@ export default function DeleteAccountPage() {
       <ul>
         <li>פרטי החשבון: שם, אימייל, טלפון, סיסמה ומזהי התקן (Push token).</li>
         <li>נתוני העסק שהזנת: לידים, לקוחות, אירועים, אורחים, הסכמים, הזמנות ומסמכים.</li>
-        <li>הקלטות קוליות אינן נשמרות כלל, ולכן אין מה למחוק.</li>
       </ul>
 
       <h2 style={h2}>נתונים שעשויים להישמר זמנית</h2>
@@ -79,8 +78,8 @@ export default function DeleteAccountPage() {
         </p>
         <p>
           <strong>Deleted:</strong> account details (name, email, phone, password, push tokens) and all business data
-          you entered (leads, customers, events, guests, contracts, invitations, documents). Voice recordings are never
-          stored. <strong>Temporarily retained</strong> only where legally required (e.g. accounting/tax records) or for
+          you entered (leads, customers, events, guests, contracts, invitations, documents).
+          <strong>Temporarily retained</strong> only where legally required (e.g. accounting/tax records) or for
           fraud prevention, then deleted or anonymized. Requests are completed within <strong>30 days</strong>.
         </p>
       </div>

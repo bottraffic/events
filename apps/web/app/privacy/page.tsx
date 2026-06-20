@@ -40,10 +40,6 @@ export default function PrivacyPage() {
 
       <h2 style={h2}>2. הרשאות באפליקציה וכיצד הן משמשות</h2>
       <ul>
-        <li>
-          <strong>מיקרופון (RECORD_AUDIO):</strong> נדרש <u>אך ורק</u> כאשר אתה מפעיל ביוזמתך את העוזר הקולי.
-          ההקלטה מומרת לטקסט לצורך ביצוע הפקודה ו<strong>אינה נשמרת</strong> לאחר מכן. אין הקלטה ברקע.
-        </li>
         <li><strong>התראות (Notifications):</strong> לקבלת עדכונים על לידים, משימות ואירועים — בכפוף לאישורך.</li>
       </ul>
 
@@ -97,9 +93,7 @@ export default function PrivacyPage() {
           guests, contracts), a push-notification device token, and basic usage/crash data.
         </p>
         <p>
-          <strong>Microphone (RECORD_AUDIO)</strong> is used only when you actively start the in-app voice assistant;
-          audio is converted to text to run your command and is not stored. <strong>Notifications</strong> are used for
-          operational updates with your consent.
+          <strong>Notifications</strong> are used for operational updates with your consent.
         </p>
         <p>
           We use data only to provide and secure the service. We do <strong>not</strong> sell personal data. We share

@@ -1,6 +1,6 @@
 import * as Speech from 'expo-speech';
 
-/* ---------- Text-to-speech (voice OUTPUT) — works in Expo Go ---------- */
+/* ---------- Text-to-speech (voice OUTPUT) — works in managed builds ---------- */
 export function speak(text: string) {
   Speech.stop();
   Speech.speak(text, { language: 'he-IL', rate: 1.0, pitch: 1.0 });
@@ -10,27 +10,20 @@ export function stopSpeaking() {
 }
 
 /* ---------- Speech-to-text (voice INPUT) ----------
- * Uses @react-native-voice/voice. Native recognition is available only in a
- * real build (eas build / APK / App Store), not in Expo Go — so we load it
- * lazily and fall back gracefully. The UI stays identical either way.
+ * Voice input is temporarily disabled (the native STT library is being replaced
+ * with a maintained one post-launch). The assistant UI falls back to typing and
+ * still reads replies aloud via TTS. The contract below is unchanged so callers
+ * keep working without edits.
  */
-let Voice: any = null;
-try { Voice = require('@react-native-voice/voice').default; } catch { Voice = null; }
-export const STT_AVAILABLE = !!Voice;
+export const STT_AVAILABLE = false;
 
-export async function startListening(onResult: (text: string) => void, onEnd?: () => void): Promise<boolean> {
-  if (!Voice) { onEnd?.(); return false; }
-  try {
-    Voice.onSpeechResults = (e: any) => { const t = e?.value?.[0]; if (t) onResult(t); };
-    Voice.onSpeechEnd = () => onEnd?.();
-    Voice.onSpeechError = () => onEnd?.();
-    await Voice.start('he-IL');
-    return true;
-  } catch {
-    onEnd?.();
-    return false;
-  }
+export async function startListening(
+  _onResult: (text: string) => void,
+  onEnd?: () => void,
+): Promise<boolean> {
+  onEnd?.();
+  return false;
 }
 export async function stopListening() {
-  try { await Voice?.stop(); } catch {}
+  /* no-op */
 }

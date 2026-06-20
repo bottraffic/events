@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-voice/voice": "^3.2.4",
     "expo": "~51.0.28",
     "expo-constants": "~16.0.2",
     "expo-linking": "~6.3.1",
