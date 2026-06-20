@@ -13,7 +13,7 @@ import { PageHeader, Card, CardHeader, Badge, Avatar, StatCard, Bar } from '@/co
 interface Customer { id: string; name: string; partner: string; phone: string; email: string; city: string; eventType: string; eventDate: string; guests: number; hall: string; events: number; value: number; deposit: number; status: string; tags: string[]; }
 interface Contract { id: string; customerId?: string; title: string; amount: number; status: string; eventDate: string; }
 
-const ST: Record<string, { label: string; tone: any }> = { DRAFT: { label: 'טיוטה', tone: 'slate' }, SENT: { label: 'נשלח לחתימה', tone: 'amber' }, SIGNED: { label: 'נחתם', tone: 'emerald' } };
+const ST: Record<string, { label: string; tone: any }> = { DRAFT: { label: 'טיוטה', tone: 'slate' }, SENT: { label: 'נשלח לחתימה', tone: 'amber' }, SIGNED: { label: 'נחתם', tone: 'emerald' }, CANCELLED: { label: 'מבוטל', tone: 'rose' } };
 const ACT_COLOR: Record<string, string> = { contract: '#10b981', call: '#0ea5e9', quote: '#f59e0b', lead: '#6366f1', meeting: '#8b5cf6', edit: '#64748b', note: '#0ea5e9', seating: '#ec4899' };
 const ACT_ICON: Record<string, string> = { contract: '✓', call: '☎', quote: '₪', lead: '✦', meeting: '◷', edit: '✎', note: '✐', seating: '◫' };
 const fmt = (d: string) => (d ? new Date(d).toLocaleDateString('he-IL') : '—');
@@ -29,9 +29,16 @@ export default function CustomersPage() {
   const [to, setTo] = useState('');
   const [editing, setEditing] = useState<Customer | null>(null);
 
+  // normalize real API shape -> the rich shape this page expects (safe defaults)
+  const norm = (x: any): Customer => ({
+    id: x.id, name: x.name ?? '', partner: x.partner ?? x.partnerName ?? '', phone: x.phone ?? '', email: x.email ?? '',
+    city: x.city ?? x.address ?? '', eventType: x.eventType ?? (x.events?.[0]?.type ?? ''), eventDate: x.eventDate ?? (x.events?.[0]?.eventDate ?? ''),
+    guests: x.guests ?? 0, hall: x.hall ?? '', events: x.events?.length ?? x.events ?? 0, value: x.value ?? 0, deposit: x.deposit ?? 0,
+    status: x.status ?? 'פעיל', tags: x.tags ?? [],
+  });
   const reload = () => {
-    api<Customer[]>('/customers').then((c) => { setItems(c); setActive((a) => a ? (c.find((x) => x.id === a.id) ?? c[0]) : c[0]); }).catch(() => {});
-    api<Contract[]>('/contracts').then(setContracts).catch(() => {});
+    api<any[]>('/customers').then((raw) => { const c = (raw ?? []).map(norm); setItems(c); setActive((a) => a ? (c.find((x) => x.id === a.id) ?? c[0]) : c[0]); }).catch(() => {});
+    api<Contract[]>('/contracts').then((c) => setContracts(c ?? [])).catch(() => {});
   };
   useEffect(() => { reload(); }, []);
 
@@ -126,7 +133,7 @@ export default function CustomersPage() {
                 <button key={c.id} onClick={() => setActive(c)} className={`flex w-full items-center gap-3 p-3 text-right transition hover:bg-slate-50 ${active?.id === c.id ? 'bg-brand-50/60' : ''}`}>
                   <Avatar name={c.name} size={40} />
                   <div className="min-w-0 flex-1"><div className="truncate font-medium text-ink">{c.name}{c.partner ? ` & ${c.partner}` : ''}</div><div className="text-[11px] text-ink-faint">{c.eventType} · {fmt(c.eventDate)}</div></div>
-                  {k && <Badge tone={ST[k.status].tone}>{ST[k.status].label}</Badge>}
+                  {k && <Badge tone={(ST[k.status] ?? { tone: 'slate' }).tone}>{(ST[k.status] ?? { label: k.status }).label}</Badge>}
                 </button>
               );
             })}
@@ -179,8 +186,8 @@ export default function CustomersPage() {
                   );
                   return (
                     <div>
-                      <div className="mb-2 flex items-center justify-between"><span className="text-sm font-medium text-ink">{k.title}</span><Badge tone={ST[k.status].tone} dot>{ST[k.status].label}</Badge></div>
-                      <div className="space-y-1.5 text-sm"><Row l="סכום" v={`₪${k.amount.toLocaleString()}`} /><Row l="מקדמה" v={`₪${active.deposit.toLocaleString()}`} /><Row l="יתרה" v={`₪${(k.amount - active.deposit).toLocaleString()}`} /></div>
+                      <div className="mb-2 flex items-center justify-between"><span className="text-sm font-medium text-ink">{k.title}</span><Badge tone={(ST[k.status] ?? { tone: 'slate' }).tone} dot>{(ST[k.status] ?? { label: k.status }).label}</Badge></div>
+                      <div className="space-y-1.5 text-sm"><Row l="סכום" v={`₪${(k.amount ?? 0).toLocaleString()}`} /><Row l="מקדמה" v={`₪${(active.deposit ?? 0).toLocaleString()}`} /><Row l="יתרה" v={`₪${((k.amount ?? 0) - (active.deposit ?? 0)).toLocaleString()}`} /></div>
                       <div className="mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 p-2.5 text-xs text-emerald-700">{k.status === 'SIGNED' ? <><FileCheck className="h-4 w-4" /> נחתם ושמור בכרטיס</> : <><Clock className="h-4 w-4" /> ממתין לחתימת הלקוח</>}</div>
                       <Link href={`/contracts?edit=${k.id}`} className="btn-outline mt-3 w-full !py-2"><FileText className="h-4 w-4" /> צפה / ערוך הסכם</Link>
                     </div>
