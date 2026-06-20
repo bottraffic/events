@@ -10,7 +10,7 @@
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "backgroundColor": "#0c6ca8",
+      "backgroundColor": "#ffffff",
       "resizeMode": "contain"
     },
     "ios": {
@@ -19,11 +19,11 @@
     },
     "android": {
       "package": "io.simcha.os",
-      "versionCode": 9,
+      "versionCode": 10,
       "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0c6ca8"
+        "backgroundColor": "#ffffff"
       },
       "runtimeVersion": {
         "policy": "appVersion"
