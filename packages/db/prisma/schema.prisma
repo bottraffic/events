@@ -173,6 +173,7 @@ model Tenant {
   customDomain String?      @unique
   plan         Plan         @default(STARTER)
   status       TenantStatus @default(TRIAL)
+  licenseUntil DateTime?    // null = unlimited; past date = expired
   settings     Json?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt

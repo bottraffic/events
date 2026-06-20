@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { api, setSession } from '@/lib/api';
+import { setSession } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,7 +19,11 @@ export default function LoginPage() {
       const body = mode === 'login'
         ? { email: form.email, password: form.password, tenantSlug: form.tenantSlug }
         : { venueName: form.venueName, adminName: form.adminName, email: form.email, password: form.password };
-      const res = await api(path, { method: 'POST', body: JSON.stringify(body) });
+      // Auth always uses the real backend so accounts/approvals are real
+      const r = await fetch(`/v1${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const res = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(res.message ?? 'שגיאה');
+      if (res.pending) { setError('החשבון נוצר וממתין לאישור מנהל המערכת. נעדכן אותך לאחר האישור.'); setMode('login'); return; }
       setSession(res.accessToken, res.refreshToken);
       router.replace('/dashboard');
     } catch (err: any) {

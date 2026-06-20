@@ -74,32 +74,93 @@ export class AuthService {
     };
   }
 
-  /** Operator-only: approve (or reject) a pending account. Guarded by platform key. */
-  async approveAccount(tenantSlug: string, email: string, approve = true) {
-    const tenant = await this.prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-    if (!tenant) throw new UnauthorizedException('Tenant not found');
-    await this.prisma.user.updateMany({
-      where: { tenantId: tenant.id, email },
-      data: { status: approve ? 'active' : 'suspended' },
-    });
-    if (approve) {
-      await this.prisma.tenant.update({ where: { id: tenant.id }, data: { status: 'ACTIVE' } });
-    }
-    return { ok: true, status: approve ? 'active' : 'suspended' };
+  /** days=number -> license for N days; days=null/0 -> unlimited license. */
+  private licenseDate(days?: number | null): Date | null {
+    if (!days || days <= 0) return null; // unlimited
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return d;
   }
 
-  /** List accounts awaiting approval (operator-only). */
-  async pendingAccounts() {
-    return this.prisma.user.findMany({
-      where: { status: 'pending', deletedAt: null },
-      select: { id: true, name: true, email: true, createdAt: true, tenant: { select: { name: true, slug: true } } },
+  /** Operator-only: approve a pending account and grant a license (timed or unlimited). */
+  async approveAccount(tenantSlug: string, email: string, days?: number | null) {
+    const tenant = await this.prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+    if (!tenant) throw new UnauthorizedException('Tenant not found');
+    await this.prisma.user.updateMany({ where: { tenantId: tenant.id, email }, data: { status: 'active' } });
+    await this.prisma.tenant.update({
+      where: { id: tenant.id },
+      data: { status: 'ACTIVE', licenseUntil: this.licenseDate(days) },
+    });
+    return { ok: true, status: 'active', licenseUntil: this.licenseDate(days) };
+  }
+
+  /** Operator-only: change/extend the license window for an existing tenant. */
+  async setLicense(tenantSlug: string, days?: number | null) {
+    const tenant = await this.prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+    if (!tenant) throw new UnauthorizedException('Tenant not found');
+    await this.prisma.tenant.update({
+      where: { id: tenant.id },
+      data: { status: 'ACTIVE', licenseUntil: this.licenseDate(days) },
+    });
+    return { ok: true, licenseUntil: this.licenseDate(days) };
+  }
+
+  /** Operator-only: suspend (close access) or re-activate a tenant. */
+  async setAccess(tenantSlug: string, open: boolean) {
+    const tenant = await this.prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+    if (!tenant) throw new UnauthorizedException('Tenant not found');
+    await this.prisma.tenant.update({ where: { id: tenant.id }, data: { status: open ? 'ACTIVE' : 'SUSPENDED' } });
+    return { ok: true, status: open ? 'ACTIVE' : 'SUSPENDED' };
+  }
+
+  /** Operator-only: edit a tenant's basic details. */
+  async editTenant(tenantSlug: string, data: { name?: string; plan?: string }) {
+    const tenant = await this.prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+    if (!tenant) throw new UnauthorizedException('Tenant not found');
+    await this.prisma.tenant.update({
+      where: { id: tenant.id },
+      data: { ...(data.name ? { name: data.name } : {}), ...(data.plan ? { plan: data.plan as any } : {}) },
+    });
+    return { ok: true };
+  }
+
+  /** Operator-only: soft-delete a tenant and its users. */
+  async deleteTenant(tenantSlug: string) {
+    const tenant = await this.prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+    if (!tenant) throw new UnauthorizedException('Tenant not found');
+    const now = new Date();
+    await this.prisma.user.updateMany({ where: { tenantId: tenant.id }, data: { deletedAt: now } });
+    await this.prisma.tenant.update({ where: { id: tenant.id }, data: { status: 'CANCELLED', deletedAt: now } });
+    return { ok: true, deleted: true };
+  }
+
+  /** Operator-only: list accounts. filter = 'pending' | 'all'. */
+  async listAccounts(filter: 'pending' | 'all' = 'all') {
+    const tenants = await this.prisma.tenant.findMany({
+      where: { deletedAt: null },
+      include: { users: { where: { deletedAt: null }, select: { name: true, email: true, status: true }, take: 1, orderBy: { createdAt: 'asc' } } },
       orderBy: { createdAt: 'desc' },
     });
+    const rows = tenants.map((t) => {
+      const admin = t.users[0];
+      const expired = t.licenseUntil ? new Date(t.licenseUntil) < new Date() : false;
+      return {
+        slug: t.slug, name: t.name, plan: t.plan, status: t.status,
+        licenseUntil: t.licenseUntil, unlimited: !t.licenseUntil, expired,
+        adminName: admin?.name, adminEmail: admin?.email, adminStatus: admin?.status,
+        createdAt: t.createdAt,
+      };
+    });
+    return filter === 'pending' ? rows.filter((r) => r.adminStatus === 'pending') : rows;
   }
 
   async login(dto: LoginDto) {
     const tenant = await this.prisma.tenant.findUnique({ where: { slug: dto.tenantSlug } });
-    if (!tenant) throw new UnauthorizedException('Invalid credentials');
+    if (!tenant || tenant.deletedAt) throw new UnauthorizedException('Invalid credentials');
+    if (tenant.status === 'SUSPENDED') throw new UnauthorizedException('הגישה לחשבון נסגרה — פנה למנהל המערכת');
+    if (tenant.status === 'CANCELLED') throw new UnauthorizedException('החשבון בוטל');
+    if (tenant.licenseUntil && new Date(tenant.licenseUntil) < new Date())
+      throw new UnauthorizedException('תוקף הרישיון פג — פנה לחידוש מול מנהל המערכת');
 
     const user = await this.prisma.user.findUnique({
       where: { tenantId_email: { tenantId: tenant.id, email: dto.email } },
