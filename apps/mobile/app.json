@@ -15,11 +15,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "io.simcha.os"
+      "bundleIdentifier": "events360.myapps"
     },
     "android": {
-      "package": "io.simcha.os",
-      "versionCode": 10,
+      "package": "events360.myapps",
+      "versionCode": 11,
       "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
