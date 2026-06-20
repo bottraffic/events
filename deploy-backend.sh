@@ -18,6 +18,8 @@ if [ ! -f "$APP/.svc.env" ]; then
   printf 'MYSQL_PASSWORD=%s\nJWT_SECRET=%s\n' "$(openssl rand -hex 16)" "$(openssl rand -hex 32)" > "$APP/.svc.env"
   chmod 600 "$APP/.svc.env"
 fi
+# dedicated operator console key (separate from JWT signing secret)
+grep -q '^PLATFORM_KEY=' "$APP/.svc.env" || echo "PLATFORM_KEY=$(openssl rand -hex 16)" >> "$APP/.svc.env"
 . "$APP/.svc.env"
 
 echo "==> MySQL + Redis containers"
@@ -60,8 +62,8 @@ npm -w apps/api run build
 echo "==> (re)start API on PM2 (localhost:4000)"
 cd "$APP/apps/api"
 pm2 delete simcha-api >/dev/null 2>&1 || true
-DATABASE_URL="$DATABASE_URL" JWT_SECRET="${JWT_SECRET}" REDIS_URL="redis://127.0.0.1:6379" \
-  NODE_ENV=production PORT=4000 HOST=127.0.0.1 CORS_ORIGIN="https://events.webon.org.il" \
+DATABASE_URL="$DATABASE_URL" JWT_SECRET="${JWT_SECRET}" PLATFORM_KEY="${PLATFORM_KEY}" REDIS_URL="redis://127.0.0.1:6379" \
+  NODE_ENV=production PORT=4000 HOST=127.0.0.1 CORS_ORIGIN="https://events.webon.org.il,http://localhost:3000" \
   pm2 start dist/main.js --name simcha-api
 pm2 save
 sleep 3

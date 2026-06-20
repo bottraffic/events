@@ -8,8 +8,9 @@ export class AuthController {
   constructor(private auth: AuthService) {}
 
   private assertPlatform(req: any) {
+    const expected = process.env.PLATFORM_KEY ?? process.env.JWT_SECRET ?? 'change-me-in-production-super-secret';
     const key = req.headers['x-platform-key'];
-    if (!key || key !== (process.env.JWT_SECRET ?? 'change-me-in-production-super-secret')) {
+    if (!key || key !== expected) {
       throw new ForbiddenException('forbidden');
     }
   }
