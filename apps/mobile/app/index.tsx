@@ -47,6 +47,9 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.button} onPress={login} disabled={loading}>
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>כניסה</Text>}
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/register')}>
+          <Text style={styles.link}>אין לך חשבון? פתיחת חשבון חדש</Text>
+        </TouchableOpacity>
         <Text style={styles.hint}>דמו: admin@demo.simcha.io / Demo1234!</Text>
       </View>
     </SafeAreaView>
@@ -62,6 +65,7 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, textAlign: 'right', fontSize: 15 },
   button: { backgroundColor: '#6366f1', borderRadius: 10, paddingVertical: 14, marginTop: 24, alignItems: 'center' },
   buttonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  link: { color: '#6366f1', textAlign: 'center', marginTop: 16, fontSize: 14, fontWeight: '600' },
   error: { color: '#dc2626', textAlign: 'center', marginTop: 12 },
   hint: { color: '#94a3b8', fontSize: 11, textAlign: 'center', marginTop: 16 },
 });
