@@ -992,3 +992,20 @@ model FeatureFlag {
 
   @@unique([tenantId, key])
 }
+
+// Self-hosted crash/error/analytics telemetry from web + mobile clients.
+model TelemetryEvent {
+  id         String   @id @default(uuid())
+  type       String   // crash | error | event
+  platform   String?  // android | ios | web
+  message    String?  @db.Text
+  stack      String?  @db.Text
+  appVersion String?
+  deviceId   String?
+  tenantId   String?
+  userId     String?
+  url        String?
+  createdAt  DateTime @default(now())
+
+  @@index([type, createdAt])
+}

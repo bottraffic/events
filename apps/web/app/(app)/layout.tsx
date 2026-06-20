@@ -9,6 +9,7 @@ import {
   Settings, Search, Bell, LogOut, PanelRightClose, PanelRightOpen, Plus, CalendarClock, Receipt, Menu, X,
 } from 'lucide-react';
 import { api, clearSession, getToken } from '@/lib/api';
+import { initTelemetry } from '@/lib/telemetry';
 import { Avatar } from '@/components/ui';
 
 type Item = { href: string; label: string; icon: React.ComponentType<any> };
@@ -121,6 +122,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    initTelemetry();
     if (!getToken()) { router.replace('/login'); return; }
     api('/auth/me').then(setMe).catch(() => {});
   }, [router]);

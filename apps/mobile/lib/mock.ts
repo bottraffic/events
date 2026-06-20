@@ -113,6 +113,9 @@ export async function mockApi(path: string, options: RequestInit = {}): Promise<
   if (path === '/tenant/logo' && method === 'PATCH') { await AsyncStorage.setItem('demo_logo', body.logo || ''); return { ok: true, logoUrl: body.logo }; }
   if (path === '/tenant/logo/remove') { await AsyncStorage.removeItem('demo_logo'); return { ok: true }; }
 
+  if (path === '/sms/status') return { provider: 'demo', configured: true };
+  if (path === '/sms/send') return { status: 'SENT', messageId: 'sms' + Date.now() };
+
   if (path === '/pipeline') {
     const leads = await getLeads();
     return STAGES.map((s) => ({ ...s, leadsCount: leads.filter((l) => l.stageId === s.id).length }));

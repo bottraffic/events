@@ -307,6 +307,11 @@ export async function mockApi(path: string, options: RequestInit = {}): Promise<
   if (path === '/tenant/logo' && method === 'PATCH') { if (typeof localStorage !== 'undefined') localStorage.setItem('demo_logo', body.logo || ''); return { ok: true, logoUrl: body.logo }; }
   if (path === '/tenant/logo/remove') { if (typeof localStorage !== 'undefined') localStorage.removeItem('demo_logo'); return { ok: true }; }
 
+  if (path === '/sms/status') return { provider: 'demo', configured: true };
+  if (path === '/sms/send') return { status: 'SENT', messageId: 'sms' + Date.now() };
+  if (path === '/sms/send-bulk') return { total: (body.recipients || []).length, sent: (body.recipients || []).length };
+  if (path === '/telemetry') return { ok: true };
+
   if (path === '/pipeline') {
     const leads = getLeads();
     return STAGES.map((s) => ({ ...s, leadsCount: leads.filter((l) => l.stageId === s.id).length, totalValue: leads.filter((l) => l.stageId === s.id).reduce((a, l) => a + (l.estimatedValue ?? 0), 0) }));
