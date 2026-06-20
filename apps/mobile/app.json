@@ -53,7 +53,7 @@
       ]
     ],
     "extra": {
-      "apiUrl": "http://10.0.2.2:4000/v1",
+      "apiUrl": "https://events.webon.org.il/v1",
       "demo": true,
       "router": {
         "origin": false
