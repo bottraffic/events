@@ -140,8 +140,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       <aside className={`fixed inset-y-0 right-0 z-50 flex flex-col border-l border-slate-200 bg-white shadow-pop transition-transform duration-200 lg:static lg:z-auto lg:shadow-none lg:transition-all ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'} ${collapsed ? 'w-64 lg:w-[72px]' : 'w-64'}`}>
         <div className="flex h-16 items-center gap-2.5 border-b border-slate-100 px-4">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 font-extrabold text-white shadow-soft">S</div>
-          {!collapsed && <div className="leading-tight"><div className="text-base font-extrabold tracking-tight text-ink">SIMCHA OS</div><div className="text-[10px] font-medium text-ink-faint">Enterprise</div></div>}
+          <img src="/logo.png" alt="events360" className="h-9 w-9 shrink-0 rounded-xl object-cover shadow-soft" />
+          {!collapsed && <div className="leading-tight"><div className="text-base font-extrabold tracking-tight text-ink">events360</div><div className="text-[10px] font-medium text-ink-faint">Venues &amp; CRM</div></div>}
           <button onClick={() => setMobileOpen(false)} className="ms-auto flex h-9 w-9 items-center justify-center rounded-xl text-ink-muted transition hover:bg-slate-100 hover:text-ink-soft lg:hidden" aria-label="סגור תפריט">
             <X className="h-5 w-5" />
           </button>

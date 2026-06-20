@@ -72,7 +72,7 @@ export default function AdminPage() {
   if (!authed) {
     return (
       <main dir="rtl" style={wrap}><div style={card}>
-        <div style={hdr}><div style={logo}>S</div><h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>קונסולת מפעיל — events360</h1></div>
+        <div style={hdr}><img src="/logo.png" alt="events360" style={logo} /><h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>קונסולת מפעיל — events360</h1></div>
         <p style={{ color: '#64748b', fontSize: 14, marginBottom: 16 }}>ניהול חשבונות ורישיונות. נדרש מפתח פלטפורמה.</p>
         <input type="password" value={key} onChange={(e) => setKey(e.target.value)} placeholder="מפתח פלטפורמה" style={input} onKeyDown={(e) => e.key === 'Enter' && load()} />
         {error && <div style={errBox}>{error}</div>}
@@ -86,7 +86,7 @@ export default function AdminPage() {
       {toast && <div style={toastBox}>{toast}</div>}
       <div style={{ ...card, maxWidth: 920 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 8 }}>
-          <div style={hdr}><div style={logo}>S</div><h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>ניהול חשבונות ורישיונות</h1></div>
+          <div style={hdr}><img src="/logo.png" alt="events360" style={logo} /><h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>ניהול חשבונות ורישיונות</h1></div>
           <div style={{ display: 'flex', gap: 8 }}><button onClick={() => load()} style={ghost}>רענן</button><button onClick={logout} style={ghost}>יציאה</button></div>
         </div>
 
@@ -141,7 +141,7 @@ export default function AdminPage() {
 const wrap: React.CSSProperties = { minHeight: '100vh', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, fontFamily: 'system-ui, sans-serif' };
 const card: React.CSSProperties = { background: '#fff', borderRadius: 18, padding: 24, width: '100%', maxWidth: 420, boxShadow: '0 10px 40px rgba(0,0,0,.08)' };
 const hdr: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 10 };
-const logo: React.CSSProperties = { width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#6366f1,#4338ca)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 };
+const logo: React.CSSProperties = { width: 36, height: 36, borderRadius: 10, objectFit: 'cover' };
 const input: React.CSSProperties = { width: '100%', border: '1px solid #cbd5e1', borderRadius: 10, padding: '11px 12px', fontSize: 15, boxSizing: 'border-box' };
 const btn: React.CSSProperties = { width: '100%', marginTop: 14, background: 'linear-gradient(135deg,#6366f1,#4338ca)', color: '#fff', border: 0, borderRadius: 10, padding: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer' };
 const ghost: React.CSSProperties = { background: '#f1f5f9', color: '#475569', border: 0, borderRadius: 9, padding: '8px 12px', fontWeight: 600, cursor: 'pointer', fontSize: 13 };

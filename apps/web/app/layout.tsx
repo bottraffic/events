@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'SIMCHA OS — ניהול אולמות וגני אירועים',
+  title: 'events360 — ניהול אולמות וגני אירועים',
   description: 'מערכת ה-SaaS המתקדמת לניהול אולמות, גני אירועים ומתחמי חתונות',
 };
 

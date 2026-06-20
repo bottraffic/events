@@ -36,8 +36,8 @@ export default function LoginPage() {
       {/* hero */}
       <div className="relative hidden flex-1 flex-col justify-between overflow-hidden bg-gradient-to-br from-brand-600 via-brand-700 to-violet-800 p-12 text-white lg:flex">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-xl font-extrabold backdrop-blur">S</div>
-          <span className="text-xl font-extrabold">SIMCHA OS</span>
+          <img src="/logo.png" alt="events360" className="h-10 w-10 rounded-xl object-cover" />
+          <span className="text-xl font-extrabold">events360</span>
         </div>
         <div>
           <h1 className="text-4xl font-extrabold leading-tight">מערכת ההפעלה<br />לאולמות וגני אירועים</h1>
@@ -48,14 +48,14 @@ export default function LoginPage() {
             ))}
           </div>
         </div>
-        <p className="text-xs text-brand-200">© 2026 SIMCHA OS · Enterprise Edition</p>
+        <p className="text-xs text-brand-200">© 2026 events360 · Venues &amp; CRM</p>
       </div>
 
       {/* form */}
       <div className="flex w-full items-center justify-center p-6 lg:w-[480px]">
         <div className="w-full max-w-sm">
           <div className="mb-8 text-center lg:hidden">
-            <div className="text-3xl font-extrabold text-brand-700">SIMCHA OS</div>
+            <img src="/logo.png" alt="events360" className="mx-auto h-16 w-16 rounded-2xl object-cover shadow-card" />
           </div>
           <h2 className="text-2xl font-bold text-ink">{mode === 'login' ? 'ברוכים השבים' : 'פתיחת חשבון'}</h2>
           <p className="mt-1 text-sm text-ink-muted">{mode === 'login' ? 'התחבר כדי להמשיך' : 'הקם את האולם שלך תוך דקות'}</p>
