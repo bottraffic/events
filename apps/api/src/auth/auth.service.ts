@@ -57,6 +57,7 @@ export class AuthService {
           name: dto.adminName,
           email: dto.email,
           passwordHash,
+          status: 'pending', // requires operator approval before first login
           userRoles: { create: { roleId: role.id } },
         },
       });
@@ -64,8 +65,36 @@ export class AuthService {
       return { tenant, user, roles: [role.level] };
     });
 
-    const tokens = await this.issueTokens(result.user.id, result.tenant.id, result.user.email, result.roles);
-    return { tenant: result.tenant, user: this.sanitize(result.user), ...tokens };
+    // Account is created in a pending state and must be approved remotely by the
+    // platform operator. No session is issued until approval.
+    return {
+      pending: true,
+      tenant: { id: result.tenant.id, name: result.tenant.name, slug: result.tenant.slug },
+      message: 'החשבון נוצר וממתין לאישור מנהל המערכת',
+    };
+  }
+
+  /** Operator-only: approve (or reject) a pending account. Guarded by platform key. */
+  async approveAccount(tenantSlug: string, email: string, approve = true) {
+    const tenant = await this.prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+    if (!tenant) throw new UnauthorizedException('Tenant not found');
+    await this.prisma.user.updateMany({
+      where: { tenantId: tenant.id, email },
+      data: { status: approve ? 'active' : 'suspended' },
+    });
+    if (approve) {
+      await this.prisma.tenant.update({ where: { id: tenant.id }, data: { status: 'ACTIVE' } });
+    }
+    return { ok: true, status: approve ? 'active' : 'suspended' };
+  }
+
+  /** List accounts awaiting approval (operator-only). */
+  async pendingAccounts() {
+    return this.prisma.user.findMany({
+      where: { status: 'pending', deletedAt: null },
+      select: { id: true, name: true, email: true, createdAt: true, tenant: { select: { name: true, slug: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async login(dto: LoginDto) {
@@ -80,6 +109,9 @@ export class AuthService {
 
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('Invalid credentials');
+
+    if (user.status === 'pending') throw new UnauthorizedException('החשבון ממתין לאישור מנהל המערכת');
+    if (user.status === 'suspended') throw new UnauthorizedException('החשבון מושעה — פנה למנהל המערכת');
 
     await this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
 

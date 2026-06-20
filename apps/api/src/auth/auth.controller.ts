@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RefreshDto, RegisterTenantDto } from './dto';
 import { CurrentUser, AuthUser, Public } from '../common/decorators';
@@ -6,6 +6,29 @@ import { CurrentUser, AuthUser, Public } from '../common/decorators';
 @Controller('auth')
 export class AuthController {
   constructor(private auth: AuthService) {}
+
+  private assertPlatform(req: any) {
+    const key = req.headers['x-platform-key'];
+    if (!key || key !== (process.env.JWT_SECRET ?? 'change-me-in-production-super-secret')) {
+      throw new ForbiddenException('forbidden');
+    }
+  }
+
+  /** Operator-only: list accounts awaiting approval. */
+  @Public()
+  @Get('pending')
+  pending(@Req() req: any) {
+    this.assertPlatform(req);
+    return this.auth.pendingAccounts();
+  }
+
+  /** Operator-only: approve or reject a pending account. */
+  @Public()
+  @Post('approve')
+  approve(@Req() req: any, @Body() body: { tenantSlug: string; email: string; approve?: boolean }) {
+    this.assertPlatform(req);
+    return this.auth.approveAccount(body.tenantSlug, body.email, body.approve ?? true);
+  }
 
   @Public()
   @Post('register-tenant')
