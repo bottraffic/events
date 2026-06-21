@@ -6,6 +6,9 @@ import { Header } from '@/components/header';
 import { SectionTitle } from '@/components/ui';
 
 const GROUPS: { title: string; items: { icon: string; label: string; href: string }[] }[] = [
+  { title: 'מכירות', items: [
+    { icon: '✅', label: 'משימות', href: '/tasks' },
+  ] },
   { title: 'אירועים', items: [
     { icon: '📅', label: 'אירועים', href: '/events' },
     { icon: '✉️', label: 'אישורי הגעה', href: '/rsvp' },

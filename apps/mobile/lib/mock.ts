@@ -163,7 +163,6 @@ export async function mockApi(path: string, options: RequestInit = {}): Promise<
   }
   if (path === '/appointments') return APPTS;
   if (path === '/calls') return CALLS;
-  if (path === '/documents') return DOCS;
 
   if (path === '/tasks' && method === 'GET') {
     if (!tasksCache) { const raw = await AsyncStorage.getItem(LS_TASKS); tasksCache = raw ? JSON.parse(raw) : SEED_TASKS; }
@@ -178,6 +177,22 @@ export async function mockApi(path: string, options: RequestInit = {}): Promise<
   if (taskMatch && method === 'PATCH') {
     tasksCache = (tasksCache ?? SEED_TASKS).map((t) => (t.id === taskMatch[1] ? { ...t, ...body } : t));
     await AsyncStorage.setItem(LS_TASKS, JSON.stringify(tasksCache)); return tasksCache.find((t) => t.id === taskMatch[1]);
+  }
+  if (taskMatch && method === 'DELETE') {
+    tasksCache = (tasksCache ?? SEED_TASKS).filter((t) => t.id !== taskMatch[1]);
+    await AsyncStorage.setItem(LS_TASKS, JSON.stringify(tasksCache)); return { deleted: true };
+  }
+
+  // --- documents / invoices (with 18% VAT; receipt = no VAT) ---
+  if (path === '/documents' && method === 'GET') return store('demo_docs', DOCS);
+  if (path === '/documents' && method === 'POST') {
+    const list = await store('demo_docs', DOCS);
+    const PREFIX: Record<string, string> = { 'חשבונית מס/קבלה': 'INR', 'חשבונית מס': 'INV', 'קבלה': 'REC', 'חשבונית עסקה': 'PRO', 'חשבונית זיכוי': 'CRN' };
+    const subtotal = Number(body.amount) || 0;
+    const vat = body.type === 'קבלה' ? 0 : Math.round(subtotal * 0.18);
+    const n = String(list.length + 1).padStart(4, '0');
+    const doc = { id: 'd' + Date.now(), number: `${PREFIX[body.type] ?? 'DOC'}-2026-${n}`, type: body.type, customerName: body.customerName ?? '', subtotal, vat, total: subtotal + vat, status: 'ISSUED' };
+    await put('demo_docs', [doc, ...list]); return doc;
   }
 
   if (path === '/notifications') return [
