@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "events360.myapps",
-      "versionCode": 11,
+      "versionCode": 13,
       "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -39,6 +39,16 @@
         "expo-image-picker",
         {
           "photosPermission": "האפליקציה ניגשת לתמונות כדי להעלות את לוגו האולם"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          }
         }
       ]
     ],
