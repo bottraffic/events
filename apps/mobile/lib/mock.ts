@@ -133,10 +133,35 @@ export async function mockApi(path: string, options: RequestInit = {}): Promise<
     await saveLeads(leads);
     return leads.find((l) => l.id === stageMatch[1]);
   }
-  if (path === '/events') return SEED_EVENTS;
-  if (path === '/customers') return CUSTOMERS;
+  // --- generic persisted lists (demo) ---
+  const store = async (key: string, seed: any[]) => { const raw = await AsyncStorage.getItem(key); return raw ? JSON.parse(raw) : seed; };
+  const put = async (key: string, arr: any[]) => { await AsyncStorage.setItem(key, JSON.stringify(arr)); };
+
+  if (path === '/customers' && method === 'GET') return store('demo_customers', CUSTOMERS);
+  if (path === '/customers' && method === 'POST') {
+    const list = await store('demo_customers', CUSTOMERS);
+    const c = { id: 'c' + Date.now(), name: body.name, partner: body.partner ?? body.partnerName ?? '', phone: body.phone ?? '', email: body.email ?? '', eventType: '', eventDate: '', guests: 0, value: 0, status: 'פעיל' };
+    await put('demo_customers', [c, ...list]); return c;
+  }
+  if (path === '/events' && method === 'GET') return store('demo_events', SEED_EVENTS);
+  if (path === '/events' && method === 'POST') {
+    const list = await store('demo_events', SEED_EVENTS);
+    const e = { id: 'e' + Date.now(), type: body.type ?? 'wedding', eventDate: body.eventDate ?? '', guestsCount: body.guestsCount ?? 0, status: body.status ?? 'INQUIRY', totalPrice: body.totalPrice ?? 0, customer: { name: body.customerName ?? 'לקוח חדש' } };
+    await put('demo_events', [e, ...list]); return e;
+  }
+  if (path === '/guests' && method === 'GET') return store('demo_guests', GUESTS);
+  if ((path === '/guests' || path === '/rsvp/guests') && method === 'POST') {
+    const list = await store('demo_guests', GUESTS);
+    const g = { id: 'g' + Date.now(), name: body.name, group: body.group ?? 'כללי', size: body.partySize ?? body.size ?? 1, status: 'PENDING' };
+    await put('demo_guests', [g, ...list]); return g;
+  }
+  const gMatch = path.match(/^\/(?:rsvp\/)?guests\/([^/]+)$/);
+  if (gMatch && method === 'PATCH') {
+    const list = await store('demo_guests', GUESTS);
+    const upd = list.map((g: any) => (g.id === gMatch[1] ? { ...g, status: body.status ?? g.status, size: body.partySize ?? g.size } : g));
+    await put('demo_guests', upd); return upd.find((g: any) => g.id === gMatch[1]);
+  }
   if (path === '/appointments') return APPTS;
-  if (path === '/guests') return GUESTS;
   if (path === '/calls') return CALLS;
   if (path === '/documents') return DOCS;
 
