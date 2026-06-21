@@ -143,6 +143,16 @@ export async function mockApi(path: string, options: RequestInit = {}): Promise<
     const c = { id: 'c' + Date.now(), name: body.name, partner: body.partner ?? body.partnerName ?? '', phone: body.phone ?? '', email: body.email ?? '', eventType: '', eventDate: '', guests: 0, value: 0, status: 'פעיל' };
     await put('demo_customers', [c, ...list]); return c;
   }
+  const custMatch = path.match(/^\/customers\/([^/]+)$/);
+  if (custMatch && method === 'PATCH') {
+    const list = await store('demo_customers', CUSTOMERS);
+    const upd = list.map((c: any) => (c.id === custMatch[1] ? { ...c, ...body, partner: body.partner ?? body.partnerName ?? c.partner } : c));
+    await put('demo_customers', upd); return upd.find((c: any) => c.id === custMatch[1]);
+  }
+  if (custMatch && method === 'DELETE') {
+    const list = await store('demo_customers', CUSTOMERS);
+    await put('demo_customers', list.filter((c: any) => c.id !== custMatch[1])); return { deleted: true };
+  }
   if (path === '/events' && method === 'GET') return store('demo_events', SEED_EVENTS);
   if (path === '/events' && method === 'POST') {
     const list = await store('demo_events', SEED_EVENTS);

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Linking, TextInput, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Linking, TextInput, Modal, ActivityIndicator, Alert } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { api } from '@/lib/api';
 import { C } from '@/lib/theme';
@@ -15,18 +15,29 @@ export default function Customers() {
   const [q, setQ] = useState('');
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: '', partner: '', phone: '', email: '' });
 
   const load = useCallback(() => { api<Cust[]>('/customers').then(setItems).catch(() => {}); }, []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
   const shown = items.filter((c) => !q || c.name.includes(q) || (c.phone || '').includes(q));
 
+  const openNew = () => { setEditId(null); setForm({ name: '', partner: '', phone: '', email: '' }); setAdding(true); };
+  const openEdit = (c: Cust) => { setEditId(c.id); setForm({ name: c.name, partner: c.partner || '', phone: c.phone || '', email: c.email || '' }); setAdding(true); };
+  const menu = (c: Cust) => Alert.alert(c.name, undefined, [
+    { text: 'עריכה', onPress: () => openEdit(c) },
+    { text: 'מחיקה', style: 'destructive', onPress: async () => { setItems((p) => p.filter((x) => x.id !== c.id)); try { await api(`/customers/${c.id}`, { method: 'DELETE' }); } catch { load(); } } },
+    { text: 'ביטול', style: 'cancel' },
+  ]);
+
   const save = async () => {
     if (!form.name.trim()) return;
     setSaving(true);
+    const payload = { name: form.name, partnerName: form.partner, partner: form.partner, phone: form.phone, email: form.email };
     try {
-      await api('/customers', { method: 'POST', body: JSON.stringify({ name: form.name, partnerName: form.partner, partner: form.partner, phone: form.phone, email: form.email }) });
-      setForm({ name: '', partner: '', phone: '', email: '' }); setAdding(false); load();
+      if (editId) await api(`/customers/${editId}`, { method: 'PATCH', body: JSON.stringify(payload) });
+      else await api('/customers', { method: 'POST', body: JSON.stringify(payload) });
+      setForm({ name: '', partner: '', phone: '', email: '' }); setAdding(false); setEditId(null); load();
     } catch {} finally { setSaving(false); }
   };
 
@@ -49,6 +60,7 @@ export default function Customers() {
                 <Text style={st.meta}>{c.eventType || '—'} · {fmt(c.eventDate)} · {c.phone || ''}</Text>
               </View>
               {c.status ? <Badge tone={tone(c.status)}>{c.status}</Badge> : null}
+              <TouchableOpacity onPress={() => menu(c)} hitSlop={10}><Text style={{ fontSize: 20, color: C.inkFaint }}>⋯</Text></TouchableOpacity>
             </View>
             <View style={st.actions}>
               <TouchableOpacity onPress={() => Linking.openURL(`tel:${c.phone}`)} style={st.actBtn}><Text style={st.actT}>📞 חייג</Text></TouchableOpacity>
@@ -59,12 +71,12 @@ export default function Customers() {
         )}
       />
 
-      <TouchableOpacity style={st.fab} onPress={() => setAdding(true)}><Text style={st.fabT}>＋</Text></TouchableOpacity>
+      <TouchableOpacity style={st.fab} onPress={openNew}><Text style={st.fabT}>＋</Text></TouchableOpacity>
 
       <Modal visible={adding} transparent animationType="slide" onRequestClose={() => setAdding(false)}>
         <View style={st.backdrop}>
           <View style={st.sheet}>
-            <Text style={st.sheetTitle}>לקוח חדש</Text>
+            <Text style={st.sheetTitle}>{editId ? 'עריכת לקוח' : 'לקוח חדש'}</Text>
             <TextInput value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} placeholder="שם מלא *" style={st.input} />
             <TextInput value={form.partner} onChangeText={(v) => setForm({ ...form, partner: v })} placeholder="בן/בת זוג" style={st.input} />
             <TextInput value={form.phone} onChangeText={(v) => setForm({ ...form, phone: v })} placeholder="טלפון" keyboardType="phone-pad" style={st.input} />
