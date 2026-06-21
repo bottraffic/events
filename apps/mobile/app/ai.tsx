@@ -42,7 +42,7 @@ export default function AiScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <Header title="עוזר AI קולי" subtitle="OpenAI · Claude · Gemini" back right={
-        <View style={{ flexDirection: 'row-reverse', alignItems: 'center', gap: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
           <Text style={{ fontSize: 11, color: C.inkMuted }}>קול</Text>
           <Switch value={voiceOn} onValueChange={(v) => { setVoiceOn(v); if (!v) stopSpeaking(); }} trackColor={{ true: C.brand }} />
         </View>
@@ -50,7 +50,7 @@ export default function AiScreen() {
 
       <ScrollView ref={scroll} contentContainerStyle={{ padding: 16, gap: 12 }}>
         {msgs.map((m, i) => (
-          <View key={i} style={[st.bubbleRow, { flexDirection: m.role === 'user' ? 'row' : 'row-reverse' }]}>
+          <View key={i} style={[st.bubbleRow, { flexDirection: m.role === 'user' ? 'row' : 'row' }]}>
             <View style={[st.avatar, { backgroundColor: m.role === 'ai' ? C.violet : C.border }]}><Text style={{ fontSize: 16 }}>{m.role === 'ai' ? '🤖' : '🧑'}</Text></View>
             <View style={[st.bubble, m.role === 'ai' ? st.aiBubble : st.userBubble]}>
               <Text style={{ color: m.role === 'ai' ? C.inkSoft : '#fff', fontSize: 14, textAlign: 'right', lineHeight: 20 }}>{m.text}</Text>
@@ -86,7 +86,7 @@ const st = StyleSheet.create({
   replay: { marginTop: 6, alignSelf: 'flex-start' },
   suggestWrap: { paddingVertical: 8, borderTopWidth: 1, borderTopColor: C.border, backgroundColor: C.card },
   chip: { borderWidth: 1, borderColor: C.border, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
-  inputBar: { flexDirection: 'row-reverse', alignItems: 'center', gap: 8, padding: 10, paddingBottom: 24, backgroundColor: C.card, borderTopWidth: 1, borderTopColor: C.border },
+  inputBar: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 10, paddingBottom: 24, backgroundColor: C.card, borderTopWidth: 1, borderTopColor: C.border },
   micBtn: { width: 46, height: 46, borderRadius: 23, backgroundColor: C.brand, alignItems: 'center', justifyContent: 'center' },
   input: { flex: 1, backgroundColor: C.bg, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12, textAlign: 'right', fontSize: 14 },
   sendBtn: { backgroundColor: C.brand, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12 },

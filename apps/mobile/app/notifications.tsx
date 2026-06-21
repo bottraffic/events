@@ -55,13 +55,13 @@ export default function Notifications() {
 }
 
 const st = StyleSheet.create({
-  card: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 12 },
+  card: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 12 },
   iconBox: { width: 38, height: 38, borderRadius: 11, backgroundColor: C.brand50, alignItems: 'center', justifyContent: 'center' },
   title: { fontWeight: '600', color: C.ink, textAlign: 'right' },
   body: { fontSize: 12, color: C.inkFaint, textAlign: 'right', marginTop: 1 },
   time: { fontSize: 11, color: C.inkFaint },
   settings: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 16, overflow: 'hidden' },
-  srow: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
+  srow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
   border: { borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
   slabel: { fontSize: 14, color: C.inkSoft },
   note: { fontSize: 11, color: C.inkFaint, textAlign: 'right', marginTop: 4, lineHeight: 16 },

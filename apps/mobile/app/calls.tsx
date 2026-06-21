@@ -31,7 +31,7 @@ export default function Calls() {
   );
 }
 const st = StyleSheet.create({
-  row: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 12 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 12 },
   name: { fontWeight: '600', color: C.ink, textAlign: 'right' },
   meta: { fontSize: 12, color: C.inkFaint, textAlign: 'right' },
   call: { width: 38, height: 38, borderRadius: 19, backgroundColor: C.brand50, alignItems: 'center', justifyContent: 'center' },

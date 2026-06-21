@@ -53,7 +53,7 @@ export default function More() {
 
 const st = StyleSheet.create({
   card: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 16, overflow: 'hidden' },
-  row: { flexDirection: 'row-reverse', alignItems: 'center', gap: 12, padding: 14 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
   border: { borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
   label: { flex: 1, fontWeight: '600', color: C.ink, textAlign: 'right' },
   logout: { marginTop: 8, backgroundColor: '#fef2f2', borderRadius: 14, paddingVertical: 13, alignItems: 'center' },

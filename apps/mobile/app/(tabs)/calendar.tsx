@@ -54,7 +54,7 @@ export default function Calendar() {
 }
 
 const st = StyleSheet.create({
-  card: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 13 },
+  card: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 13 },
   dot: { width: 10, height: 10, borderRadius: 5 },
   check: { width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: C.border, alignItems: 'center', justifyContent: 'center' },
   title: { fontWeight: '600', color: C.ink, fontSize: 14, textAlign: 'right' },

@@ -14,7 +14,7 @@ export default function Documents() {
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <Header title="חשבוניות וקבלות" subtitle="הנפקת מסמכים" back />
-      <View style={{ flexDirection: 'row-reverse', gap: 10, padding: 14 }}>
+      <View style={{ flexDirection: 'row', gap: 10, padding: 14 }}>
         <StatCard label="מסמכים" value={docs.length} color={C.brand} />
         <StatCard label="סך הכנסות" value={`₪${total.toLocaleString()}`} color={C.emerald} />
       </View>
@@ -39,7 +39,7 @@ export default function Documents() {
   );
 }
 const st = StyleSheet.create({
-  row: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 13 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 13 },
   num: { fontWeight: '700', color: C.ink, textAlign: 'right' },
   meta: { fontSize: 12, color: C.inkFaint, textAlign: 'right', marginTop: 2 },
   total: { fontWeight: '800', color: C.ink },

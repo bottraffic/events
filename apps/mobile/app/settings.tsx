@@ -48,7 +48,7 @@ export default function Settings() {
         </View>
 
         <SectionTitle>מיתוג האולם</SectionTitle>
-        <View style={[st.card, { padding: 16, flexDirection: 'row-reverse', alignItems: 'center', gap: 14 }]}>
+        <View style={[st.card, { padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }]}>
           <View style={st.logoBox}>
             {logo ? <Image source={{ uri: logo }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
               : <Text style={{ fontSize: 30, fontWeight: '800', color: '#cbd5e1' }}>{venue.charAt(0)}</Text>}
@@ -56,7 +56,7 @@ export default function Settings() {
           <View style={{ flex: 1 }}>
             <Text style={[st.label, { fontWeight: '700', marginBottom: 2 }]}>לוגו האולם</Text>
             <Text style={{ fontSize: 11, color: C.inkFaint, marginBottom: 10, textAlign: 'right' }}>יוצג בהזמנות, מסמכים ובאתר</Text>
-            <View style={{ flexDirection: 'row-reverse', gap: 8 }}>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
               <TouchableOpacity onPress={pickLogo} disabled={saving} style={st.btn}>
                 {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.btnTxt}>{logo ? 'החלף לוגו' : 'העלה לוגו'}</Text>}
               </TouchableOpacity>
@@ -84,7 +84,7 @@ export default function Settings() {
   );
 }
 const st = StyleSheet.create({
-  profile: { flexDirection: 'row-reverse', alignItems: 'center', gap: 12, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 16, padding: 16 },
+  profile: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 16, padding: 16 },
   name: { fontWeight: '800', color: C.ink, fontSize: 16, textAlign: 'right' },
   email: { fontSize: 12, color: C.inkFaint, textAlign: 'right' },
   card: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 16, overflow: 'hidden' },
@@ -92,7 +92,7 @@ const st = StyleSheet.create({
   btn: { backgroundColor: C.brand, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 9, alignItems: 'center', justifyContent: 'center' },
   btnTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
   btnGhost: { backgroundColor: '#fee2e2', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 9, justifyContent: 'center' },
-  row: { flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
   border: { borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
   label: { fontSize: 14, color: C.inkSoft, textAlign: 'right' },
   val: { fontSize: 14, color: C.inkFaint, fontWeight: '600' },

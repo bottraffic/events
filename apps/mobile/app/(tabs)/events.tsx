@@ -59,7 +59,7 @@ export default function Events() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#f8fafc' },
   card: { backgroundColor: '#fff', borderRadius: 14, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: '#e2e8f0' },
-  row: { flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   name: { fontWeight: '700', color: '#1e293b', fontSize: 16, textAlign: 'right' },
   meta: { color: '#64748b', fontSize: 13, textAlign: 'right', marginTop: 8 },
   price: { color: '#334155', fontSize: 14, fontWeight: '700', textAlign: 'right', marginTop: 6 },

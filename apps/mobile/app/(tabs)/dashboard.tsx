@@ -36,7 +36,7 @@ export default function Dashboard() {
           <Text style={{ color: '#fff', fontSize: 22 }}>‹</Text>
         </TouchableOpacity>
 
-        <View style={{ flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 12 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
           <StatCard label="לידים החודש" value={ov?.leadsThisMonth ?? '—'} color={C.brand} />
           <StatCard label="עסקאות שנסגרו" value={ov?.closedDeals ?? '—'} color={C.emerald} />
           <StatCard label="הכנסה צפויה" value={ov ? `₪${Number(ov.expectedRevenue).toLocaleString()}` : '—'} color={C.amber} />
@@ -45,7 +45,7 @@ export default function Dashboard() {
 
         <View>
           <SectionTitle>גישה מהירה</SectionTitle>
-          <View style={{ flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 10 }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
             {QUICK.map((q) => (
               <TouchableOpacity key={q.label} onPress={() => router.push(q.href as any)} style={st.quick}>
                 <Text style={{ fontSize: 24 }}>{q.icon}</Text>
@@ -73,13 +73,13 @@ export default function Dashboard() {
 }
 
 const st = StyleSheet.create({
-  voice: { flexDirection: 'row-reverse', alignItems: 'center', gap: 12, backgroundColor: C.brand, borderRadius: 18, padding: 16 },
+  voice: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.brand, borderRadius: 18, padding: 16 },
   mic: { width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' },
   voiceTitle: { color: '#fff', fontWeight: '800', fontSize: 16, textAlign: 'right' },
   voiceSub: { color: '#e0e7ff', fontSize: 12, textAlign: 'right', marginTop: 2 },
   quick: { width: '31%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 16, paddingVertical: 14, alignItems: 'center', gap: 6 },
   quickLabel: { fontSize: 12, fontWeight: '600', color: C.inkSoft },
-  actRow: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10, padding: 12 },
+  actRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12 },
   actName: { fontWeight: '600', color: C.ink, textAlign: 'right' },
   actT: { fontSize: 12, color: C.inkFaint, textAlign: 'right' },
   actTm: { fontSize: 11, color: C.inkFaint },

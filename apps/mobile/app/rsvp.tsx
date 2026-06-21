@@ -16,7 +16,7 @@ export default function Rsvp() {
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <Header title="אישורי הגעה" subtitle="גל & מאיה · חתונה" back />
-      <View style={{ flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 10, padding: 14 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, padding: 14 }}>
         <StatCard label="אישרו" value={sum('YES')} color={C.emerald} />
         <StatCard label="אולי" value={sum('MAYBE')} color={C.amber} />
         <StatCard label="לא מגיעים" value={sum('NO')} color={C.rose} />
@@ -38,7 +38,7 @@ export default function Rsvp() {
   );
 }
 const st = StyleSheet.create({
-  row: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 12 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 14, padding: 12 },
   name: { fontWeight: '600', color: C.ink, textAlign: 'right' },
   meta: { fontSize: 12, color: C.inkFaint, textAlign: 'right' },
 });
