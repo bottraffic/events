@@ -3,7 +3,7 @@
     "name": "events360",
     "slug": "events360",
     "owner": "bottraffic",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "scheme": "simcha",
     "userInterfaceStyle": "light",
@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "events360.myapps",
-      "versionCode": 14,
+      "versionCode": 22,
       "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
